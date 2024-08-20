@@ -1,25 +1,22 @@
 package praktikum;
 
-import junit.framework.TestCase;
+
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
 import static org.junit.Assert.assertNotEquals;
+import static org.hamcrest.CoreMatchers.containsString;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BurgerTest extends TestCase {
-    // Инициализируем базу данных
-    Database database = new Database();
-    // Считаем список доступных булок из базы данных
-    List<Bun> buns = database.availableBuns();
-    // Считаем список доступных ингредиентов из базы данных
-    @Mock
-    List<Ingredient> ingredientsMock = database.availableIngredients();
+public class BurgerTest {
+    Burger burger = new Burger();
+
 
     @Spy
     Burger burgerSpy = new Burger();
@@ -27,70 +24,64 @@ public class BurgerTest extends TestCase {
 
     @Test
     public void testAddIngredient() {
-        // Создадим новый бургер
-        Burger burger = new Burger();
-        List<Ingredient> ingredients = database.availableIngredients();
-        // Соберём бургер
-        burger.setBuns(buns.get(0));
-        Integer coundBefor = burger.ingredients.size();
-        burger.addIngredient(ingredients.get(1));
-        Integer coundAfter = burger.ingredients.size();
-        assertNotEquals(coundBefor, coundAfter);
-
+        Integer countBefor = burger.ingredients.size();
+        burger.addIngredient(new Ingredient(IngredientType.SAUCE, "hot sauce", 100));
+        Integer countAfter = burger.ingredients.size();
+        assertNotEquals(countBefor, countAfter);
     }
 
     @Test
     public void testRemoveIngredient() {
-        // Создадим новый бургер
-        Burger burger = new Burger();
-        List<Ingredient> ingredients = database.availableIngredients();
-        // Соберём бургер
-        burger.setBuns(buns.get(0));
-        burger.addIngredient(ingredients.get(1));
-        Integer coundBefor = burger.ingredients.size();
+        burger.addIngredient(new Ingredient(IngredientType.SAUCE, "hot sauce", 100));
+        Integer countBefor = burger.ingredients.size();
         burger.removeIngredient(0);
-        Integer coundAfter = burger.ingredients.size();
-        assertNotEquals(coundBefor, coundAfter);
-
+        Integer countAfter = burger.ingredients.size();
+        assertNotEquals(countBefor, countAfter);
     }
 
     @Test
     public void testMoveIngredient() {
-        // Создадим новый бургер
-        Burger burger = new Burger();
-        List<Ingredient> ingredients = database.availableIngredients();
-        // Соберём бургер
-        burger.setBuns(buns.get(0));
-        burger.addIngredient(ingredients.get(1));
-        burger.addIngredient(ingredients.get(2));
-        burger.moveIngredient(1,0);
-
-        assertEquals(ingredients.get(2).getName(), burger.ingredients.get(0).getName());
-
+        burger.addIngredient(new Ingredient(IngredientType.SAUCE, "hot sauce", 100));
+        burger.addIngredient(new Ingredient(IngredientType.SAUCE, "sour cream", 200));
+        burger.addIngredient(new Ingredient(IngredientType.SAUCE, "chili sauce", 300));
+        burger.moveIngredient(2,0);
+        assertEquals("chili sauce", burger.ingredients.get(0).getName());
     }
 
     @Test
     public void testGetPrice() {
-        List<Ingredient> ingredients = database.availableIngredients();
         // Соберём бургер
-        burgerSpy.setBuns(buns.get(0));
-        burgerSpy.addIngredient(ingredients.get(1));
-        burgerSpy.addIngredient(ingredients.get(2));
+        burgerSpy.setBuns(new Bun("green bun", 100));
+        burgerSpy.addIngredient(new Ingredient(IngredientType.SAUCE, "hot sauce", 100));
+        burgerSpy.addIngredient(new Ingredient(IngredientType.SAUCE, "sour cream", 200));
         Mockito.when(burgerSpy.getPrice()).thenReturn(500.00F);
         float priceBurger = burgerSpy.getPrice();
-        assertEquals(500.00F, priceBurger);
+        assertEquals(500.00F, priceBurger, 0.001);
     }
 
     @Test
-    public void testGetReceipt() {
-        List<Ingredient> ingredients = database.availableIngredients();
-        // Соберём бургер
-        burgerSpy.setBuns(buns.get(0));
-        burgerSpy.addIngredient(ingredients.get(1));
-        burgerSpy.addIngredient(ingredients.get(2));
-        burgerSpy.getReceipt();
-        Mockito.verify(burgerSpy, Mockito.times(1)).getPrice();
-
+    public void testGetReceiptPrice() {
+        burgerSpy.setBuns(new Bun("green bun", 100));
+        burgerSpy.addIngredient(new Ingredient(IngredientType.SAUCE, "chili sauce", 300));
+        Mockito.when(burgerSpy.getPrice()).thenReturn(200.00F);
+        String receipt = burgerSpy.getReceipt();
+        MatcherAssert.assertThat(receipt, containsString("200"));
     }
+
+    @Test
+    public void testGetReceiptNameBun() {
+        burger.setBuns(new Bun("green bun", 100));
+        String receipt = burger.getReceipt();
+        MatcherAssert.assertThat(receipt, containsString("green bun"));
+    }
+
+    @Test
+    public void testGetReceiptNameIngredient() {
+        burger.setBuns(new Bun("green bun", 100));
+        burger.addIngredient( new Ingredient(IngredientType.SAUCE, "sour cream", 200));
+        String receipt = burger.getReceipt();
+        MatcherAssert.assertThat(receipt, containsString("sauce sour cream"));
+    }
+
 
 }
