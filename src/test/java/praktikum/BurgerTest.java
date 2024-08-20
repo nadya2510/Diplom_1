@@ -17,7 +17,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 public class BurgerTest {
     Burger burger = new Burger();
 
-
     @Spy
     Burger burgerSpy = new Burger();
 
@@ -70,15 +69,21 @@ public class BurgerTest {
 
     @Test
     public void testGetReceiptNameBun() {
-        burger.setBuns(new Bun("green bun", 100));
+        Bun bun = Mockito.spy(new Bun("green bun", 100));
+        burger.setBuns(bun);
+        burger.addIngredient( new Ingredient(IngredientType.SAUCE, "sour cream", 200));
+        Mockito.when(bun.getName()).thenReturn("green bun");
         String receipt = burger.getReceipt();
         MatcherAssert.assertThat(receipt, containsString("green bun"));
     }
 
     @Test
     public void testGetReceiptNameIngredient() {
+        Ingredient ingredient = Mockito.spy(new Ingredient(IngredientType.SAUCE, "sour cream", 200));
         burger.setBuns(new Bun("green bun", 100));
-        burger.addIngredient( new Ingredient(IngredientType.SAUCE, "sour cream", 200));
+        burger.addIngredient(ingredient);
+        Mockito.when(ingredient.getName()).thenReturn("sour cream");
+        Mockito.when(ingredient.getType()).thenReturn(IngredientType.SAUCE);
         String receipt = burger.getReceipt();
         MatcherAssert.assertThat(receipt, containsString("sauce sour cream"));
     }
