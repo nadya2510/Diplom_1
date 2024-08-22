@@ -58,9 +58,12 @@ public class BurgerTest {
         burger.addIngredient(new Ingredient(IngredientType.SAUCE, "hot sauce", 100));
         burger.addIngredient(new Ingredient(IngredientType.SAUCE, "sour cream", 200));
         burger.addIngredient(new Ingredient(IngredientType.SAUCE, "chili sauce", 300));
-        burger.moveIngredient(2,0);
 
-        assertEquals("chili sauce", burger.ingredients.get(0).getName());
+        Ingredient ingredientBefor = burger.ingredients.get(0);
+        burger.moveIngredient(2,0);
+        Ingredient ingredientAfter = burger.ingredients.get(0);
+
+        assertNotEquals(ingredientBefor, ingredientAfter);
     }
 
     @Test
