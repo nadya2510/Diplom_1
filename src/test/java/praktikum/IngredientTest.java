@@ -3,10 +3,6 @@ package praktikum;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.Mockito;
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 
 
@@ -39,38 +35,19 @@ public class IngredientTest {
 
     @Test
     public void testIngredientGetType() {
-        List<Ingredient> ingredients = new ArrayList<>();;
-        ingredients.add(new Ingredient(typeIngredient, nameIngredient, priceIngredient));
-        // Инициализируем базу данных
-        Database database = Mockito.mock(Database.class);
-        Mockito.when(database.availableIngredients()).thenReturn(ingredients);
-        // Считаем список доступных булок из базы данных
-        assertEquals(typeIngredient, database.availableIngredients().get(0).getType());
+        Ingredient ingredient = new Ingredient(typeIngredient, nameIngredient, priceIngredient);
+        assertEquals(typeIngredient, ingredient.getType());
     }
 
     @Test
     public void testIngredientGetName() {
-        List<Ingredient> ingredients = new ArrayList<>();;
-        ingredients.add(new Ingredient(typeIngredient, nameIngredient, priceIngredient));
-        // Инициализируем базу данных
-        Database database = Mockito.mock(Database.class);
-        Mockito.when(database.availableIngredients()).thenReturn(ingredients);
-        // Считаем список доступных булок из базы данных
-        assertEquals(nameIngredient, database.availableIngredients().get(0).getName());
+        Ingredient ingredient = new Ingredient(typeIngredient, nameIngredient, priceIngredient);
+        assertEquals(nameIngredient, ingredient.getName());
     }
 
     @Test
     public void testIngredientGetPrice() {
-        List<Ingredient> ingredients = new ArrayList<>();;
-        ingredients.add(new Ingredient(typeIngredient, nameIngredient, priceIngredient));
-        // Инициализируем базу данных
-        Database database = Mockito.mock(Database.class);
-        Mockito.when(database.availableIngredients()).thenReturn(ingredients);
-        // Считаем список доступных булок из базы данных
-        assertEquals(priceIngredient, database.availableIngredients().get(0).getPrice(),0.001);
+        Ingredient ingredient = new Ingredient(typeIngredient, nameIngredient, priceIngredient);
+        assertEquals(priceIngredient, ingredient.getPrice(),0.001);
     }
-
-
-
-
 }
