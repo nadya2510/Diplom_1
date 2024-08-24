@@ -15,16 +15,18 @@ import static org.hamcrest.CoreMatchers.containsString;
 public class BurgerTest {
     Burger burger = new Burger();
 
-    @Spy
-    Burger burgerSpy = new Burger();
-
     @Mock
     Bun bun;
 
     @Mock
     Ingredient ingredient;
 
-    //
+    @Mock
+    Ingredient ingredient1;
+
+    @Mock
+    Ingredient ingredient2;
+
     float priceBun = 100;
     float priceIngredient = 200;
     float price = priceBun*2+priceIngredient;
@@ -37,7 +39,7 @@ public class BurgerTest {
     @Test
     public void testAddIngredient() {
         Integer countBefor = burger.ingredients.size();
-        burger.addIngredient(new Ingredient(IngredientType.SAUCE, "hot sauce", 100));
+        burger.addIngredient(ingredient);
         Integer countAfter = burger.ingredients.size();
 
         assertNotEquals(countBefor, countAfter);
@@ -45,7 +47,7 @@ public class BurgerTest {
 
     @Test
     public void testRemoveIngredient() {
-        burger.addIngredient(new Ingredient(IngredientType.SAUCE, "hot sauce", 100));
+        burger.addIngredient(ingredient);
         Integer countBefor = burger.ingredients.size();
         burger.removeIngredient(0);
         Integer countAfter = burger.ingredients.size();
@@ -55,9 +57,9 @@ public class BurgerTest {
 
     @Test
     public void testMoveIngredient() {
-        burger.addIngredient(new Ingredient(IngredientType.SAUCE, "hot sauce", 100));
-        burger.addIngredient(new Ingredient(IngredientType.SAUCE, "sour cream", 200));
-        burger.addIngredient(new Ingredient(IngredientType.SAUCE, "chili sauce", 300));
+        burger.addIngredient(ingredient);
+        burger.addIngredient(ingredient1);
+        burger.addIngredient(ingredient2);
 
         Ingredient ingredientBefor = burger.ingredients.get(0);
         burger.moveIngredient(2,0);
@@ -118,8 +120,14 @@ public class BurgerTest {
 
     @Test
     public void testGetReceipt() {
-        burgerSpy.setBuns(new Bun("black bun", 100));
-        burgerSpy.addIngredient(new Ingredient(IngredientType.SAUCE, "hot sauce", 100));
+        Burger burgerSpy = Mockito.spy(new Burger());;
+        Mockito.when(bun.getPrice()).thenReturn(priceBun);
+        Mockito.when(ingredient.getPrice()).thenReturn(priceIngredient);
+        Mockito.when(bun.getName()).thenReturn(nameBun);
+        Mockito.when(ingredient.getName()).thenReturn(nameIngredient);
+        Mockito.when(ingredient.getType()).thenReturn(typeIngredient);
+        burgerSpy.setBuns(bun);
+        burgerSpy.addIngredient(ingredient);
         burgerSpy.getReceipt();
 
         Mockito.verify(burgerSpy, Mockito.times(1)).getPrice();
